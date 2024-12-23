@@ -24,48 +24,57 @@ def binary_search_iteratif(data, target):
     return -1
 
 # Fungsi untuk mengukur waktu eksekusi
-def measure_time(func, *args, iterations=10):
-    start_time = time.perf_counter()
-    for _ in range(iterations):
-        func(*args)
-    end_time = time.perf_counter()
-    return (end_time - start_time) / iterations
+def measure_time_search(search_func, *args):
+    start_time = time.time()
+    search_func(*args)
+    return time.time() - start_time
 
 
 # Main program
 if __name__ == "__main__":
     # Ukuran data
-    data_sizes = [123, 1234, 9999]  # Ubah ukuran sesuai kebutuhan
-    iterations = 10
-    linear_times_iteratif = []
-    binary_times_iteratif = []
+    data_size = np.arange(0, 1001, 100)  # Data sizes from 0 to 1000 in steps of 100
+    linear_iterative = []
+    linear_recursive = []
+    binary_iterative = []
+    binary_recursive = []
 
     for size in data_sizes:
         print(f"\nData size: {size}")
         
-        # Data acak untuk linear search
-        random_data = [random.randint(1, size) for _ in range(size)]
-        target = random.choice(random_data)
-        
-        # Data terurut untuk binary search
-        sorted_data = sorted(random_data)
+    for n in data_size:
+        arr = list(range(n))
+        target = n - 1  # Target is the last element
+    
+        # Measure times
+        linear_iterative.append(measure_time_search(linear_search_iterative, arr, target))
+        linear_recursive.append(measure_time_search(linear_search_recursive, arr, target))
+        binary_iterative.append(measure_time_search(binary_search_iterative, arr, target))
+        binary_recursive.append(measure_time_search(binary_search_recursive, arr, target, 0, len(arr) - 1))
         
         # --- Linear Search ---
-        linear_iterative_time = measure_time(linear_search_iteratif, random_data, target, iterations=iterations)
-        linear_times_iteratif.append(linear_iterative_time)
-        print(f"Linear Search Iterative Time: {linear_iterative_time:.6f} seconds")
-    
-        
-        # --- Binary Search ---
-        binary_iterative_time = measure_time(binary_search_iteratif, sorted_data, target, iterations=iterations)
-        binary_times_iteratif.append(binary_iterative_time)
-        print(f"Binary Search Iterative Time: {binary_iterative_time:.6f} seconds")
+       def plot_search_comparison(data_range, title):
+    plt.figure(figsize=(10, 6))
+    mask = data_size <= data_range  # Filter data for the specified range
+    plt.plot(data_size[mask], np.array(linear_iterative)[mask], label="Linear Search Iterative", marker='o', color='orange')
+    plt.plot(data_size[mask], np.array(linear_recursive)[mask], label="Linear Search Recursive", marker='o', color='red')
+    plt.plot(data_size[mask], np.array(binary_iterative)[mask], label="Binary Search Iterative", marker='o', color='blue')
+    plt.plot(data_size[mask], np.array(binary_recursive)[mask], label="Binary Search Recursive", marker='o', color='magenta')
 
-    # Plot the results
-    plt.plot(data_sizes, linear_times_iteratif, label='Linear Search Iteratif')
-    plt.plot(data_sizes, binary_times_iteratif, label='Binary Search Iteratif')
-    plt.xlabel('Data Size')
-    plt.ylabel('Time (seconds)')
-    plt.title('Search Time Comparison')
-    plt.legend()
+    # Add labels, title, and legend
+    plt.title(title, fontsize=14)
+    plt.xlabel("Data Size", fontsize=12)
+    plt.ylabel("Time (seconds)", fontsize=12)
+    plt.legend(fontsize=10)
+    plt.grid(True, linestyle='--', alpha=0.6)
+    plt.tight_layout()
     plt.show()
+
+# Plot for data range 0-1000
+plot_search_comparison(1000, "Search Time Comparison: Linear vs Binary (0-1000)")
+
+# Plot for data range 0-200
+plot_search_comparison(200, "Search Time Comparison: Linear vs Binary (0-200)")
+
+# Plot for data range 0-400
+plot_search_comparison(400, "Search Time Comparison: Linear vs Binary (0-400)")
