@@ -23,11 +23,34 @@ def binary_search_iteratif(data, target):
             high = mid - 1
     return -1
 
+# Fungsi untuk pencarian biner rekursif
+def binary_search_rekursif(data, target, low, high):
+    if low > high:
+        return -1
+    mid = (low + high) // 2
+    if data[mid] == target:
+        return mid
+    elif data[mid] < target:
+        return binary_search_rekursif(data, target, mid + 1, high)
+    else:
+        return binary_search_rekursif(data, target, low, mid - 1)
+
+# Pencarian Linear (Rekursif)
+def linear_search_rekursif(data, target, index=0):
+    if index >= len(data):
+        return -1
+    if data[index] == target:
+        return index
+    return linear_search_rekursif(data, target, index + 1)
+
 # Fungsi untuk mengukur waktu eksekusi
-def measure_time_search(search_func, *args):
-    start_time = time.time()
-    search_func(*args)
-    return time.time() - start_time
+def measure_time(func, *args, iterations=10):
+    start_time = time.perf_counter()
+    for _ in range(iterations):
+        func(*args)
+    end_time = time.perf_counter()
+    return (end_time - start_time) / iterations
+
 
 
 # Main program
