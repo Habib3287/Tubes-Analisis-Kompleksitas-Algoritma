@@ -1,0 +1,74 @@
+import time
+import random
+import matplotlib.pyplot as plt
+
+# Fungsi untuk pencarian biner rekursif
+def binary_search_rekursif(data, target, low, high):
+    if low > high:
+        return -1
+    mid = (low + high) // 2
+    if data[mid] == target:
+        return mid
+    elif data[mid] < target:
+        return binary_search_rekursif(data, target, mid + 1, high)
+    else:
+        return binary_search_rekursif(data, target, low, mid - 1)
+
+# Fungsi untuk mengukur waktu eksekusi
+def measure_time(func, *args, iterations=10):
+    start_time = time.perf_counter()
+    for _ in range(iterations):
+        func(*args)
+    end_time = time.perf_counter()
+    return (end_time - start_time) / iterations
+
+# Pencarian Linear (Rekursif)
+def linear_search_rekursif(data, target, index=0):
+    if index >= len(data):
+        return -1
+    if data[index] == target:
+        return index
+    return linear_search_rekursif(data, target, index + 1)
+
+# Main program
+if __name__ == "__main__":
+    # Ukuran data
+    data_sizes = [123, 1234, 9999]  # Ubah ukuran sesuai kebutuhan
+    iterations = 10
+    linear_times_rekursif = []
+
+    binary_times_rekursif = []
+
+    for size in data_sizes:
+        print(f"\nData size: {size}")
+        
+        # Data acak untuk linear search
+        random_data = [random.randint(1, size) for _ in range(size)]
+        target = random.choice(random_data)
+        
+        # Data terurut untuk binary search
+        sorted_data = sorted(random_data)
+        
+        # --- Linear Search ---
+  
+        
+        linear_recursive_time = measure_time(linear_search_rekursif, random_data, target, iterations=iterations)
+        linear_times_rekursif.append(linear_recursive_time)
+        print(f"Linear Search Recursive Time: {linear_recursive_time:.6f} seconds")
+        
+        # --- Binary Search ---
+        
+        
+        binary_recursive_time = measure_time(binary_search_rekursif, sorted_data, target, 0, len(sorted_data) - 1, iterations=iterations)
+        binary_times_rekursif.append(binary_recursive_time)
+        print(f"Binary Search Recursive Time: {binary_recursive_time:.6f} seconds")
+
+    # Plot the results
+  
+    plt.plot(data_sizes, linear_times_rekursif, label='Linear Search Rekursif')
+    plt.plot(data_sizes, binary_times_rekursif, label='Binary Search Rekursif')
+    plt.xlabel('Data Size')
+    plt.ylabel('Time (seconds)')
+    plt.title('Search Time Comparison')
+    plt.legend()
+    plt.show()
